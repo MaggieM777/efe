@@ -1,1 +1,178 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8">
+  <title>Prolog Анализатор</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      font-weight: bold;
+      margin: 30px;
+      background: linear-gradient(to right, #ece9e6, #ffffff);
+      background-size: cover;
+      animation: fadeIn 1s ease-in;
+    }
 
+    h2, h3, h4, p, li, a {
+      font-weight: bold;
+    }
+
+    h2 {
+      color: #333;
+    }
+
+    #output {
+      margin-top: 20px;
+    }
+
+    .section {
+      margin-bottom: 20px;
+      padding: 15px;
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      animation: slideIn 0.8s ease-out;
+    }
+
+    .facts {
+      background-color: #e3f2fd;
+      border-left: 5px solid #2196f3;
+    }
+
+    .rules {
+      background-color: #fff3e0;
+      border-left: 5px solid #fb8c00;
+    }
+
+    .comments {
+      background-color: #e8f5e9;
+      border-left: 5px solid #4caf50;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+
+    @keyframes slideIn {
+      from {transform: translateY(20px); opacity: 0;}
+      to {transform: translateY(0); opacity: 1;}
+    }
+
+    a {
+      display: inline-block;
+      margin-top: 10px;
+      color: #1565c0;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .tips {
+      background-color: #f9fbe7;
+      border-left: 5px solid #cddc39;
+      padding: 15px;
+      border-radius: 15px;
+      margin-top: 30px;
+    }
+
+    iframe {
+      margin-top: 10px;
+      border: none;
+    }
+
+    .contact-cloud {
+      background-color: #e8f5e9;
+      border-left: 5px solid #4caf50;
+      padding: 15px;
+      border-radius: 15px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Качи Prolog файл (.pl)</h2>
+  <input type="file" id="fileInput" accept=".pl">
+  <div id="output"></div>
+
+  <div class="tips">
+    <h3>💡 Как да пишем по-добър код:</h3>
+    <ul>
+      <li>Използвай описателни имена за променливите.</li>
+      <li>Избягвай повторения в кода.</li>
+      <li>Пиши ясни и кратки коментари.</li>
+      <li>Разделяй кода на логически части.</li>
+      <li>Планирай преди да започнеш да кодираш.</li>
+    </ul>
+    <p>Научи повече от следното видео:</p>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/g34jS24JWqw" title="SWISH Prolog Tutorial" allowfullscreen></iframe>
+  </div>
+
+  <div class="tips" style="background-color: #fff8e1; border-left: 5px solid #ffb300;">
+    <h3>SWISH: Най-важното за писане на добър Prolog код</h3>
+    <p>SWISH е онлайн платформа за писане на Prolog код. За да пишете ефективно, е важно да избягвате чести грешки и да следвате добри практики.</p>
+    <h4>Чести грешки:</h4>
+    <ul>
+      <li>❌ Забравени точки в края на редовете.</li>
+      <li>❌ Променливи, започващи с малка буква (трябва с главна).</li>
+      <li>❌ Липса на коментари и обяснения в кода.</li>
+      <li>❌ Несъответствия между факти и правила.</li>
+    </ul>
+<h4>Препоръки:</h4>
+    <ul>
+      <li>✅ Завършвайте всеки ред с точка.</li>
+      <li>✅ Използвайте описателни имена и променливи.</li>
+      <li>✅ Групирайте кода логически и използвайте отстъпи.</li>
+      <li>✅ Добавяйте коментари за по-лесно разбиране.</li>
+      <li>✅ Проверявайте всяка част от кода чрез тестови заявки.</li>
+    </ul>
+
+    <p>Важно е да пишеш чист, структуриран и проверен код. Така ще избегнеш проблеми и ще се ориентираш по-лесно в по-големи проекти.</p>
+  </div>
+
+  <div class="contact-cloud">
+    Ако срещате затруднения със SWISH, моля, свържете се с нас:<br>
+    <a href="mailto:support@swish-prolog.org">support@swish-prolog.org</a>
+  </div>
+
+  <script>
+    document.getElementById('fileInput').addEventListener('change', function(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const content = e.target.result;
+        const lines = content.split('\n');
+
+        const facts = [];
+        const rules = [];
+        const comments = [];
+
+        lines.forEach(line => {
+          const trimmed = line.trim();
+
+          if (trimmed.startsWith('%')) {
+            comments.push(trimmed);
+          } else if (trimmed.includes(':-')) {
+            rules.push(trimmed);
+          } else if (trimmed && trimmed.endsWith('.')) {
+            facts.push(trimmed);
+          }
+        });
+
+        const outputDiv = document.getElementById('output');
+        outputDiv.innerHTML = `
+          <div class="section facts"><strong>Факти (${facts.length}):</strong><br>${facts.join('<br>')}</div>
+          <div class="section rules"><strong>Правила (${rules.length}):</strong><br>${rules.join('<br>')}</div>
+          <div class="section comments"><strong>Коментари (${comments.length}):</strong><br>${comments.join('<br>')}</div>
+        `;
+      };
+
+      reader.readAsText(file);
+    });
+  </script>
+</body>
+</html>
